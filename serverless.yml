@@ -76,12 +76,25 @@ functions:
   connect:
     handler: handler.link_connect
     events:
-      - http: GET connect/{serviceType}
+      - http:
+          path: connect/{serviceType}
+          method: get
+          integration: lambda
+          cors: true
+
   callback:
     handler: handler.link_callback
     events:
-      - http: GET callback/{serviceType}
-      - http: POST callback/{serviceType}
+      - http:
+          path: callback/{serviceType}
+          method: get
+          integration: lambda
+          cors: true
+      - http: 
+          path: callback/{serviceType}
+          method: post
+          integration: lambda
+          cors: true
 
 #    you can add any of the following events
 #    events:
