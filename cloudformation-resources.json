@@ -1,0 +1,85 @@
+{
+  "IamRoleLambdaExecution": {
+    "Type": "AWS::IAM::Role",
+    "Properties": {
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "lambda.amazonaws.com"
+              ]
+            },
+            "Action": [
+              "sts:AssumeRole"
+            ]
+          }
+        ]
+      },
+      "Path": "/"
+    }
+  },
+  "IamPolicyLambdaExecution": {
+    "Type": "AWS::IAM::Policy",
+    "Properties": {
+      "PolicyName": "${self:provider.stage}-${self:provider.project}-lambda",
+      "PolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "logs:CreateLogGroup",
+              "logs:CreateLogStream",
+              "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:${self:provider.region}:*:*"
+          },
+          {
+            "Effect": "Allow",
+            "Action": "dynamodb:*",
+            "Resource": "arn:aws:dynamodb:${self:provider.region}:*:*/${self:provider.stage}-${self:provider.project}-*"
+          }
+        ]
+      },
+      "Roles": [
+        {
+          "Ref": "IamRoleLambdaExecution"
+        }
+      ]
+    }
+  },
+  "DynamoDBUser": {
+    "Type": "AWS::DynamoDB::Table",
+    "DeletionPolicy": "Retain",
+    "Properties": {
+      "AttributeDefinitions": [
+        {
+          "AttributeName": "ServiceType",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "Username",
+          "AttributeType": "S"
+        }
+      ],
+      "KeySchema": [
+        {
+          "AttributeName": "ServiceType",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "Username",
+          "KeyType": "RANGE"
+        }
+      ],
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": "5",
+        "WriteCapacityUnits": "5"
+      },
+      "TableName": "${self:provider.stage}-${self:provider.project}-credentials"
+    }
+  }
+}

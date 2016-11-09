@@ -1,0 +1,101 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: ruelette-api
+
+provider:
+  name: aws
+  stage: dev
+  region: us-east-1
+  timeout: 40 # optional, default is 6
+  runtime: nodejs4.3
+  memorySize: 128
+  project: ${self:service}
+
+custom:
+  writeEnvVars:
+    DOMAIN: api.ruelette.com
+    NODE_ENV: ${self:provider.stage}
+    STAGE: ${self:provider.stage}
+    PROJECT: ${self:provider.project}
+#    ENCRYPTION_PASSPHRASE: ${env:ENCRYPTION_PASSPHRASE}
+    ENCRYPTION_JWT_PASSPHRASE: ${env:ENCRYPTION_JWT_PASSPHRASE}
+#    DEPLOY_SHA: ${env:CIRCLE_SHA1}
+    OAUTH_TRIPIT_CLIENT_KEY: ${env:OAUTH_TRIPIT_CLIENT_KEY}
+    OAUTH_TRIPIT_CLIENT_SECRET: ${env:OAUTH_TRIPIT_CLIENT_SECRET}
+#    OAUTH_DROPBOX_CLIENT_KEY: ${env:OAUTH_DROPBOX_CLIENT_KEY}
+#    OAUTH_DROPBOX_CLIENT_SECRET: ${env:OAUTH_DROPBOX_CLIENT_SECRET}
+#    OAUTH_GOOGLE_CLIENT_KEY: ${env:OAUTH_GOOGLE_CLIENT_KEY}
+#    OAUTH_GOOGLE_CLIENT_SECRET: ${env:OAUTH_GOOGLE_CLIENT_SECRET}
+#    OAUTH_SKYDRIVE_CLIENT_KEY: ${env:OAUTH_SKYDRIVE_CLIENT_KEY}
+#    OAUTH_SKYDRIVE_CLIENT_SECRET: ${env:OAUTH_SKYDRIVE_CLIENT_SECRET}
+
+# you can overwrite defaults here
+#  stage: dev
+#  region: us-east-1
+
+# you can add statements to the Lambda function's IAM Role here
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:ListBucket"
+#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+#    - Effect: "Allow"
+#      Action:
+#        - "s3:PutObject"
+#      Resource:
+#        Fn::Join:
+#          - ""
+#          - - "arn:aws:s3:::"
+#            - "Ref" : "ServerlessDeploymentBucket"
+
+# you can add packaging information here
+package:
+  include:
+    - lib
+    - functions
+  exclude:
+    - tmp
+    - .git
+
+functions:
+  test:
+    handler: handler.test
+    events:
+      - http: GET test
+  connect:
+    handler: handler.link_connect
+    events:
+      - http: GET connect/{serviceType}
+  callback:
+    handler: handler.link_callback
+    events:
+      - http: GET callback/{serviceType}
+      - http: POST callback/{serviceType}
+
+#    you can add any of the following events
+#    events:
+#      - http:
+#          path: users/create
+#          method: get
+#      - s3: ${env:BUCKET}
+#      - schedule: rate(10 minutes)
+#      - sns: greeter-topic
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    $ref: ./cloudformation-resources.json
+
+plugins:
+  - serverless-plugin-write-env-vars
