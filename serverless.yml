@@ -20,14 +20,43 @@ provider:
   timeout: 40 # optional, default is 6
   runtime: nodejs4.3
   memorySize: 128
-  project: ${self:service}
 
 custom:
+  variables:
+    stage: ${opt:stage, self:provider.stage}
+    region: ${opt:region, self:provider.region}
+    project: ${self:service}
+
+  standardResponseTemplate: "{\"success\":true, \"data\": $input.json('$') }"
+  errorResponseTemplate: "#set($inputRoot = $input.path('$.errorMessage')){\"success\":false, \"error\": $inputRoot }"
+  standardResponses:
+    headers:
+      Content-Type: "'application/json'"
+    template: ${self:custom.standardResponseTemplate}
+    statusCodes:
+      200:
+        pattern: ''
+        template:
+          application/json: ${self:custom.standardResponseTemplate}
+      400:
+        template:
+          application/json: ${self:custom.errorResponseTemplate}
+        pattern: '.*\[400\].*'
+      404:
+        template:
+          application/json: ${self:custom.errorResponseTemplate}
+        pattern: '.*\[404\].*'
+      500:
+        template:
+          application/json: ${self:custom.errorResponseTemplate}
+        pattern: '.*\[500\].*'
+
+
   writeEnvVars:
     DOMAIN: api.ruelette.com
-    NODE_ENV: ${self:provider.stage}
-    STAGE: ${self:provider.stage}
-    PROJECT: ${self:provider.project}
+    NODE_ENV: ${self:custom.variables.stage}
+    STAGE: ${self:custom.variables.stage}
+    PROJECT: ${self:custom.variables.project}
 #    ENCRYPTION_PASSPHRASE: ${env:ENCRYPTION_PASSPHRASE}
     ENCRYPTION_JWT_PASSPHRASE: ${env:ENCRYPTION_JWT_PASSPHRASE}
 #    DEPLOY_SHA: ${env:CIRCLE_SHA1}
@@ -72,13 +101,20 @@ functions:
   test:
     handler: handler.test
     events:
-      - http: GET test
+      - http:
+          path: test
+          method: get
+          response: ${self:custom.standardResponses}
+          integration: lambda
+          cors: true
+
   connect:
     handler: handler.link_connect
     events:
       - http:
           path: connect/{serviceType}
           method: get
+          response: ${self:custom.standardResponses}
           integration: lambda
           cors: true
 
@@ -88,11 +124,13 @@ functions:
       - http:
           path: callback/{serviceType}
           method: get
+          response: ${self:custom.standardResponses}
           integration: lambda
           cors: true
       - http:
           path: callback/{serviceType}
           method: post
+          response: ${self:custom.standardResponses}
           integration: lambda
           cors: true
 

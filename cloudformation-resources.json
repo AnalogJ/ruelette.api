@@ -24,7 +24,7 @@
   "IamPolicyLambdaExecution": {
     "Type": "AWS::IAM::Policy",
     "Properties": {
-      "PolicyName": "${self:provider.stage}-${self:provider.project}-lambda",
+      "PolicyName": "${self:custom.variables.stage}-${self:custom.variables.project}-lambda",
       "PolicyDocument": {
         "Version": "2012-10-17",
         "Statement": [
@@ -35,12 +35,12 @@
               "logs:CreateLogStream",
               "logs:PutLogEvents"
             ],
-            "Resource": "arn:aws:logs:${self:provider.region}:*:*"
+            "Resource": "arn:aws:logs:${self:custom.variables.region}:*:*"
           },
           {
             "Effect": "Allow",
             "Action": "dynamodb:*",
-            "Resource": "arn:aws:dynamodb:${self:provider.region}:*:*/${self:provider.stage}-${self:provider.project}-*"
+            "Resource": "arn:aws:dynamodb:${self:custom.variables.region}:*:*/${self:custom.variables.stage}-${self:custom.variables.project}-*"
           }
         ]
       },
@@ -51,7 +51,7 @@
       ]
     }
   },
-  "DynamoDBUser": {
+  "DynamoDBCredentials": {
     "Type": "AWS::DynamoDB::Table",
     "DeletionPolicy": "Retain",
     "Properties": {
@@ -79,7 +79,7 @@
         "ReadCapacityUnits": "5",
         "WriteCapacityUnits": "5"
       },
-      "TableName": "${self:provider.stage}-${self:provider.project}-credentials"
+      "TableName": "${self:custom.variables.stage}-${self:custom.variables.project}-credentials"
     }
   }
 }
