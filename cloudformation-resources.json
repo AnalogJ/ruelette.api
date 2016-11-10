@@ -51,7 +51,7 @@
       ]
     }
   },
-  "DynamoDBCredentials": {
+  "DynamoDBUsers": {
     "Type": "AWS::DynamoDB::Table",
     "DeletionPolicy": "Retain",
     "Properties": {
@@ -79,7 +79,38 @@
         "ReadCapacityUnits": "5",
         "WriteCapacityUnits": "5"
       },
-      "TableName": "${self:custom.variables.stage}-${self:custom.variables.project}-credentials"
+      "TableName": "${self:custom.variables.stage}-${self:custom.variables.project}-users"
+    }
+  },
+  "DynamoDBPreAuth": {
+    "Type": "AWS::DynamoDB::Table",
+    "DeletionPolicy": "Retain",
+    "Properties": {
+      "AttributeDefinitions": [
+        {
+          "AttributeName": "ServiceType",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "RequestId",
+          "AttributeType": "S"
+        }
+      ],
+      "KeySchema": [
+        {
+          "AttributeName": "ServiceType",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "RequestId",
+          "KeyType": "RANGE"
+        }
+      ],
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": "5",
+        "WriteCapacityUnits": "5"
+      },
+      "TableName": "${self:custom.variables.stage}-${self:custom.variables.project}-preauth"
     }
   }
 }
