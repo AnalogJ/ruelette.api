@@ -107,6 +107,12 @@ functions:
           response: ${self:custom.standardResponses}
           integration: lambda
           cors: true
+      - http:
+          path: test
+          method: post
+          response: ${self:custom.standardResponses}
+          integration: lambda
+          cors: true
 
   connect:
     handler: handler.link_connect
