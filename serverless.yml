@@ -140,6 +140,17 @@ functions:
           integration: lambda
           cors: true
 
+  externaltripittrips:
+    handler: handler.external_tripit_trips
+    events:
+      - http:
+          path: external/tripit/trips
+          method: get
+          response: ${self:custom.standardResponses}
+          integration: lambda
+          cors: true
+
+
 #    you can add any of the following events
 #    events:
 #      - http:
