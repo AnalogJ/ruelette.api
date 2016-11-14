@@ -140,8 +140,8 @@ functions:
           integration: lambda
           cors: true
 
-  externaltripittrips:
-    handler: handler.external_tripit_trips
+  externalTripitFindAllTrips:
+    handler: handler.externalTripit.findAllTrips
     events:
       - http:
           path: external/tripit/trips
@@ -150,6 +150,15 @@ functions:
           integration: lambda
           cors: true
 
+  externalTripitFindOneTrip:
+    handler: handler.externalTripit.findOneTrip
+    events:
+      - http:
+          path: external/tripit/trips/{tripId}
+          method: get
+          response: ${self:custom.standardResponses}
+          integration: lambda
+          cors: true
 
 #    you can add any of the following events
 #    events:

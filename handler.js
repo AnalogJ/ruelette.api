@@ -12,6 +12,5 @@ module.exports = {
 
     test: test_controller.test,
 
-    external_tripit_trips: external_tripit_controller.trips
-
+    externalTripit: external_tripit_controller,
 }
