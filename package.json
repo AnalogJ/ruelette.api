@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/AnalogJ/ruelette.api#readme",
   "dependencies": {
+    "airapi": "^0.1.0",
     "aws-sdk": "^2.5.3",
     "bcrypt": "^0.8.7",
     "dotenv": "^2.0.0",

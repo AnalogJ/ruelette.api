@@ -141,7 +141,7 @@ functions:
           cors: true
 
   externalTripitFindAllTrips:
-    handler: handler.externalTripit.findAllTrips
+    handler: handler.externalTripitFindAllTrips
     events:
       - http:
           path: external/tripit/trips
@@ -151,10 +151,20 @@ functions:
           cors: true
 
   externalTripitFindOneTrip:
-    handler: handler.externalTripit.findOneTrip
+    handler: handler.externalTripitFindOneTrip
     events:
       - http:
           path: external/tripit/trips/{tripId}
+          method: get
+          response: ${self:custom.standardResponses}
+          integration: lambda
+          cors: true
+
+  externalAirbnbSearch:
+    handler: handler.externalAirbnbSearch
+    events:
+      - http:
+          path: external/airbnb/search
           method: get
           response: ${self:custom.standardResponses}
           integration: lambda

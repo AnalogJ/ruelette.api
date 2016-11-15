@@ -4,6 +4,7 @@ var link_controller = require("./lib/controllers/link");
 var test_controller = require("./lib/controllers/test");
 
 var external_tripit_controller = require('./lib/controllers/external/tripit')
+var external_airbnb_controller = require('./lib/controllers/external/airbnb')
 
 module.exports = {
 
@@ -12,5 +13,8 @@ module.exports = {
 
     test: test_controller.test,
 
-    externalTripit: external_tripit_controller,
+    externalTripitFindOneTrip: external_tripit_controller.findOneTrip,
+    externalTripitFindAllTrips: external_tripit_controller.findAllTrips,
+
+    externalAirbnbSearch: external_airbnb_controller.search,
 }
